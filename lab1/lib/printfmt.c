@@ -7,6 +7,7 @@
 #include <inc/string.h>
 #include <inc/stdarg.h>
 #include <inc/error.h>
+#include <inc/cga.h>
 
 /*
  * Space or zero padding and a field width are supported for the numeric
@@ -27,6 +28,7 @@ static const char * const error_string[MAXERROR] =
 	[E_NO_FREE_ENV]	= "out of environments",
 	[E_FAULT]	= "segmentation fault",
 };
+
 
 /*
  * Print a number (base <= 16) in reverse order,
@@ -90,8 +92,10 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 
 	while (1) {
 		while ((ch = *(unsigned char *) fmt++) != '%') {
-			if (ch == '\0')
+			if (ch == '\0'){
+                ccolor = 0x0700;
 				return;
+            }
 			putch(ch, putdat);
 		}
 
@@ -227,6 +231,8 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		case 'x':
 			num = getuint(&ap, lflag);
 			base = 16;
+
+
 		number:
 			printnum(putch, putdat, num, base, width, padc);
 			break;
@@ -235,6 +241,10 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		case '%':
 			putch(ch, putdat);
 			break;
+
+        case 'm':
+            ccolor = getint(&ap,lflag);
+            break;
 
 		// unrecognized escape sequence - just print it literally
 		default:

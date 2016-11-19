@@ -23,6 +23,7 @@ struct Command {
 
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
+	{ "quit", "quit system", mon_quit },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
 	{ "backtrace", "Display information about addresses of the function callers ", mon_backtrace },
 };
@@ -37,6 +38,12 @@ mon_help(int argc, char **argv, struct Trapframe *tf)
 	for (i = 0; i < ARRAY_SIZE(commands); i++)
 		cprintf("%s - %s\n", commands[i].name, commands[i].desc);
 	return 0;
+}
+
+int
+mon_quit(int argc, char **argv, struct Trapframe *tf)
+{
+    return -1;
 }
 
 int
@@ -127,6 +134,10 @@ monitor(struct Trapframe *tf)
 	cprintf("Welcome to the JOS kernel monitor!\n");
 	cprintf("Type 'help' for a list of commands.\n");
     cprintf("%m%s\n%m%s\n%m%s\n", 0x0100, "blue", 0x0200, "green", 0x0400, "red");
+
+    int x = 1, y = 3, z = 4;//inserted
+    cprintf("x %d, y %x, z %d\n", x, y, z);//inserted
+
 
 
 	while (1) {
